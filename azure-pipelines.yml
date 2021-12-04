@@ -56,11 +56,11 @@ stages:
           secretType: 'dockerRegistry'
           secretName: '$(acrsecret)'
           dockerRegistryEndpoint: 'ShivDevopsToACR'
-    - task: KubernetesManifest@0
-      inputs:
-        action: 'deploy'
-        kubernetesServiceConnection: 'shivACR'
-        namespace: 'default'
-        manifests: |
-        $(Pipeline.Workspace)/manifest/deployment.yml
-        $(Pipeline.Workspace)/manifest/service.yml
+      - task: KubernetesManifest@0
+        inputs:
+          action: 'deploy'
+          kubernetesServiceConnection: 'shivACR'
+          namespace: 'default'
+          manifests: |
+          $(Pipeline.Workspace)/manifest/deployment.yml
+          $(Pipeline.Workspace)/manifest/service.yml
