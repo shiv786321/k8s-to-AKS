@@ -62,5 +62,5 @@ stages:
           kubernetesServiceConnection: 'shivACR'
           namespace: 'default'
           manifests: |
-          $(Pipeline.Workspace)/manifest/deployment.yml
-          $(Pipeline.Workspace)/manifest/service.yml
+            $(Pipeline.Workspace)/manifest/deployment.yml
+            $(Pipeline.Workspace)/manifest/service.yml
