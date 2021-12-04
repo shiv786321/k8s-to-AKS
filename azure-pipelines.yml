@@ -38,29 +38,31 @@ stages:
   variables:
     acrsecret: k8sexacrsect
   jobs:
-    - job: Deploy
+    - deployment: Deploy
       displayName: Deploy to AKS
+      environment: 'k8sdev.default'
       pool:
         vmimage: ubuntu-latest
-      steps: 
-      - task: DownloadPipelineArtifact@2
-        inputs:
-          buildType: 'current'
-          artifactName: 'manifest'
-          targetPath: '$(Pipeline.Workspace)/manifest'
-      - task: KubernetesManifest@0
-        inputs:
-          action: 'createSecret'
-          kubernetesServiceConnection: 'shivACR'
-          namespace: 'default'
-          secretType: 'dockerRegistry'
-          secretName: '$(acrsecret)'
-          dockerRegistryEndpoint: 'ShivDevopsToACR'
-      - task: KubernetesManifest@0
-        inputs:
-          action: 'deploy'
-          kubernetesServiceConnection: 'shivACR'
-          namespace: 'default'
-          manifests: |
-            $(Pipeline.Workspace)/manifest/deployment.yml
-            $(Pipeline.Workspace)/manifest/service.yml
+        strategy: 
+          runonce:
+            deploy:
+        steps: 
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              buildType: 'current'
+              artifactName: 'manifest'
+              targetPath: '$(Pipeline.Workspace)/manifest'
+          - task: KubernetesManifest@0
+            inputs:
+              action: 'createSecret'
+              namespace: 'default'
+              secretType: 'dockerRegistry'
+              secretName: '$(acrsecret)'
+              dockerRegistryEndpoint: 'ShivDevopsToACR'
+          - task: KubernetesManifest@0
+            inputs:
+              action: 'deploy'
+              namespace: 'default'
+              manifests: |
+                $(Pipeline.Workspace)/manifest/deployment.yml
+                $(Pipeline.Workspace)/manifest/service.yml
